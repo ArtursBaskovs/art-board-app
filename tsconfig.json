@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "baseUrl": "./src",
+    "plugins": [
+      {
+         
+      }
+    ],
+    "paths": {
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@assets/*": ["assets/*"],
+      "@utils/*": ["utils/*"]
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "moduleResolution": "Node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+
