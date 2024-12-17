@@ -1,0 +1,6 @@
+.tools-container {
+    @include sidebar-block-border;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}

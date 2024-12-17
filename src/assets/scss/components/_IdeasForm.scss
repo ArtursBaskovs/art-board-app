@@ -1,0 +1,26 @@
+.ideasForm {
+    
+    display: flex;
+    flex-direction: column; 
+    gap: 20px; 
+    width: 100%;
+    
+    @include sidebar-block-border;
+}
+.ideasForm small {
+    margin: 0;
+    color: rgba($text-color, .5);
+    text-align: left;
+}
+.ideasForm label {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: bold; 
+    color: $text-color;
+    gap: 1rem;
+}
+.btn-container {
+    @include row-container(1em, center);
+}

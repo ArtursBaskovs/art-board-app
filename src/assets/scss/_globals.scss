@@ -1,11 +1,55 @@
 // src/styles/global.scss
-body {
+html {
+    font-size: 16px;
+    line-height: 1.5; 
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0; 
+    line-height: 1.5;
+    background-color: $background-color;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-}
+  }
+  
+  h1 {
+    font-family: 'Georgia', serif;
+    font-size: 2.5rem; 
+    letter-spacing: 0.05em;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+  }
+  
+  h3 {
+    font-size: 1.75rem;
+    letter-spacing: 0.1em; 
+  }
+  
+  p {
+    font-size: 1rem;
+    letter-spacing: 0; 
+  }
+  
+  button {
+    font-size: 1rem;
+    letter-spacing: 0.1em; 
+  }
+  label {
+    font-size: 1rem;
+    letter-spacing: 0.1em; 
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  small {
+    font-size: 0.875rem; 
+  }
 
 *, *::before, *::after {
     box-sizing: border-box;

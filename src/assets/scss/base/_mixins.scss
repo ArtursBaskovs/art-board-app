@@ -1,0 +1,17 @@
+@mixin row-container($gap: 5px, $justify: center) {
+    display: flex;
+    flex-direction: row;
+    gap: $gap;
+    justify-content: $justify;
+}
+
+@mixin sidebar-block-border() {
+    border-bottom: 1px solid rgba($secondary-color, 0.4);
+    border-radius: 3px 3px 3px 3px;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: 6px;
+    padding-right: 6px;
+
+    margin-bottom: .5rem;
+}

@@ -1,0 +1,37 @@
+.sideBar-container {
+    background-color: $panel-background-color;
+    overflow: hidden;
+
+    //display: none; later
+    
+    display: flex; 
+    justify-content: center;
+    align-items: start; 
+    z-index: 1000;
+
+    left: 0;
+    height: 100vh;
+    position: fixed;
+    width: 20vw;
+    top: 0;
+  
+}
+
+.sideBar {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    max-width: 80%;
+    height: 90vh;
+    margin-top: 3rem;
+    
+    
+    border-top: 1px solid rgba($secondary-color, 0.6);
+    
+    padding: 1em;
+    border-radius: 3px 3px 3px 3px;
+    
+    
+  
+}
