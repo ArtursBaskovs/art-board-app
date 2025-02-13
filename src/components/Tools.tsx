@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import StickyNoteIcon from "../assets/images/StickyNoteIcon";
 import ColorPaletteIcon from "../assets/images/ColorPaletteIcon";
 import PencilIcon from "../assets/images/PencilIcon";
@@ -8,10 +8,17 @@ import CursorIcon from "../assets/images/CursorIcon";
 
 
 
-
 const Tools: React.FC = () => {
+    const [toolIsActive, setToolIsActive] = useState(false);
+
+
+
     return (
         <div className="tools-container">
+            <button className="icon-btn">
+                I
+            </button>
+
             <button className="icon-btn">
                 <PencilIcon />
             </button>

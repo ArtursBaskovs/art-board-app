@@ -15,3 +15,17 @@
 
     margin-bottom: .5rem;
 }
+//inside viewpoint
+@mixin fixed-center() {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+//indide parent 
+@mixin absolute-center() {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

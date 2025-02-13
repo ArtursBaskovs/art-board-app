@@ -6,6 +6,15 @@
     width: 100%;
     
     @include sidebar-block-border;
+
+    p {
+        font-size: 0.875rem;
+        line-height: 0;
+        min-width: 22%;
+    }
+    input {
+        min-width: 78%;
+    }
 }
 .ideasForm small {
     margin: 0;

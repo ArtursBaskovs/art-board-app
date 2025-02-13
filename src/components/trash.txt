@@ -1,0 +1,8 @@
+    const [inputValues, setInputValues] = useState<InputValues>({
+        Mood: '',
+        Setting: '',
+        Plant: '',
+        Creature: '',
+        PieceOfMedia: '',
+        Place: '',
+    });

@@ -30,8 +30,9 @@
     border-top: 1px solid rgba($secondary-color, 0.6);
     
     padding: 1em;
-    border-radius: 3px 3px 3px 3px;
-    
-    
-  
+    border-radius: 3px 3px 3px 3px; 
+}
+
+.idea-tool-window{
+    @include fixed-center;
 }
