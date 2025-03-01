@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchIcon from "../../assets/images/SearchIcon";
 import { getGenerationResult } from "./ideaGeneration";
+import { useTools } from "../ToolsContext";
 
 interface GeneratedIdea {
     shortIdea: string;
@@ -26,8 +27,9 @@ const IdeasForm: React.FC = () => {
         "Place",
     ]);
     const [topicElements, setTopicElements] = useState<string[]>([]);
-
-    const [savedIdeas, setSavedIdeas] = useState<string[]>([]);
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [countDown, setCountDown] = useState<number>();
+    const {isFormVisible} = useTools();
     
 
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -38,23 +40,24 @@ const IdeasForm: React.FC = () => {
         }));
     };
   
-    //тогда останется просто использовать json который генерируется и вствлять ответы в поля ввода. затем кнопка показать больше инфы или типа того
-    // и наконец кнопка сохранить которая выведет куда то весь текст который был в полях ввода. возможно стоит добовлять кнопку для каждого поля отдельно хз
-    //и наверно стоит сделать эту секцию как то отдельно чтобы компактнее хз
-
     //creates new element for topic, adds it to topic array
     const addNewTopicBtn = () => {
+        if(!inputValues.AddTopic.trim()) return;
         //not sure that i need separate topic list and topic element list
         addTopicToArray(inputValues.AddTopic)
         setTopicElements((prevElement) => [...prevElement, inputValues.AddTopic]);  
-
-        //replace spaces with _ for safer input names
-        const inputNameNoSpaces = inputValues.AddTopic.replace(/ /g, "_");
+        
+        const inputNameNoSpaces = inputValues.AddTopic.replace(/ /g, "_"); //replace spaces with _ for safer input names
         setInputValues((prevInputs) => ({
             ...prevInputs, [inputNameNoSpaces]: "",
         }));
-        console.log(topicElements);
+        setInputValues(prevValue => ({
+            ...prevValue,
+            AddTopic: ''
+        }));
+        //console.log(topicElements);
     }
+
 
     const addTopicToArray = (newTopic: string) => {
         setTopics((prevTopics) => [...prevTopics, newTopic]);
@@ -66,78 +69,123 @@ const IdeasForm: React.FC = () => {
         //remove from list of html element blocks to disappear 
         setTopicElements((prevTopicElements) => prevTopicElements.filter(topicEl => topicEl !== key));
 
-        //remove from input fields object | not sure that it is necessary to remove fields from useState
+        //remove from input fields object 
+        const inputListObject = inputValues;
+        delete inputListObject[key];
+        setInputValues(inputListObject);
+        console.log(inputValues);
     }
 
     const generateBtnHandler = async () => {
-        console.log(topics);
+        console.log(inputValues);
+        if (noEmptyTopicLeft()) return; //to avoid needless requests when user has all topics filled
         const generatedIdeasObject = await getGenerationResult(topics);
         fillTextaresWithIdeas(generatedIdeasObject);
-        console.log(generatedIdeasObject);
+        setCountDown(10);
+        setIsDisabled(true);
     }
 
+    const noEmptyTopicLeft = () => {
+        const arrayOfInputsValues = Object.values(inputValues).slice(1); //slices AddTopic field, I want to check only topic fields
+        console.log(arrayOfInputsValues);
+        return arrayOfInputsValues.every(value => value.trim() != '');
+    }
+    //to avoid too frequent reauests to openai 
+    useEffect(() => {
+        //ends this useEffect when interval is done
+        if (countDown === 0) {
+            setIsDisabled(false);
+            return;
+        };
+        
+        let count = countDown;
+        const timer = setInterval(() => {
+            if(count != undefined) count = count - 1;
+            setCountDown(count);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [countDown]);
+
     const fillTextaresWithIdeas = (generatedIdeasObject: Record<string, GeneratedIdea>) => {
+        //goes trough ideas object and inputs values in text areas with same key name
         Object.entries(generatedIdeasObject).forEach(([key, value]) => {
-            setInputValues((prevValues) => ({
-                ...prevValues,
-                [key]: `${value.shortIdea}, ${value.example}`,
-            }));
+
+            //get current text area value and check if it is empty to determine if generated idea should be inputed here
+            const valueOfCurrentInput = inputValues[key];
+            if(valueOfCurrentInput.trim() == "") {
+                //fill text areas with values
+                setInputValues((prevValues) => ({
+                    ...prevValues,
+                    [key]: `${value.shortIdea}, ${value.example}`,
+                }));
+            }
+
+
         });
     }
 
+    const clearText = (inputName: string) => {
+        setInputValues({
+            ...inputValues,
+            [inputName]: ''
+        }) 
+    }
+
     //saved idea will create something on board that contains idea text, removing will be handled in board
-    const saveIdeaBtn = () => {
+    const saveIdeaBtn = (key: string) => {
         
     }
 
     return (
         <>
 
-<form className="ideasForm">
+            {isFormVisible && <form className="ideasForm">
                 <small>Write or generate themes of your future artwork</small>
-                <label className="addTopic">
-                    <p>Add topic:</p>
-                    
+                <div className="add-topic-label">
                     <input 
                         type="text" 
+                        className="topic-field"
                         name="AddTopic"
                         value={inputValues.AddTopic}
                         onChange={handleInputChange}
                     />
-                </label>
-
-                <button type="button" onClick={addNewTopicBtn}>Add</button>
+                    <button className="topic-btn" type="button" onClick={addNewTopicBtn}>ADD TOPIC</button>
+                </div>
+                
                 {topics.map((topic, index) => {
                     const key = topic; 
 
                     return (
-                        <label key={index}>
+                        <div className="topic-block" key={index}>
                             <button 
                                 type="button" 
-                                key={index}
                                 onClick={() => removeTopicBtn(key)}    
                             >-</button>
                                 <p>{key}</p>
                                 <textarea 
+                                    id="ideaTextArea"
                                     name={key} 
                                     value={inputValues[key as keyof typeof inputValues]}
                                     onChange={handleInputChange}
                                     
                                 />
-                            <button type="button" onClick={saveIdeaBtn}>Save</button>
-                        </label>
+                            <div className="btn-column">
+                                <button type="button" onClick={() => saveIdeaBtn(key)}>SAVE</button>
+                                <button type="button" onClick={() => clearText(key)}>CLEAR</button>
+                            </div>
+                        </div>
                     );
                 })}
 
                 <div className="btn-container">
-                    <button type="button" onClick={generateBtnHandler}>Generate</button>
-                    <button style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <SearchIcon size={30} ></SearchIcon>
-                        References
-                    </button>
+                    <button 
+                        type="button" 
+                        disabled={isDisabled}
+                        onClick={generateBtnHandler}>
+                    {countDown && countDown > 0 ? `Generate (${countDown})` : "Generate"}</button>
                     
                 </div>
-            </form>
+            </form>}
         </>
     )
 }

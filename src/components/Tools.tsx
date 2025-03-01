@@ -5,18 +5,22 @@ import PencilIcon from "../assets/images/PencilIcon";
 import ImageIcon from "../assets/images/ImageIcon";
 import TextIcon from "../assets/images/TextIcon";
 import CursorIcon from "../assets/images/CursorIcon";
+import { useTools } from "./ToolsContext";
+import SearchIcon from "../assets/images/SearchIcon";
 
 
 
 const Tools: React.FC = () => {
     const [toolIsActive, setToolIsActive] = useState(false);
-
-
+    //tools context imports | Завтра вспомни че это и эту фигню используй в форме с другим импортом для скрытия и показвания
+    const {ideasFormVisibilityToggle} = useTools();
 
     return (
         <div className="tools-container">
-            <button className="icon-btn">
-                I
+            <button 
+            className="icon-btn"
+            onClick={ideasFormVisibilityToggle}>
+                <SearchIcon />
             </button>
 
             <button className="icon-btn">

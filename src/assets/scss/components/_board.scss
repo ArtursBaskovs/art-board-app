@@ -1,0 +1,21 @@
+$cellLeftTop: rgba($primary-color, 0.01) 1.8px;
+$cellRightBottom: rgba($primary-color, .01) 32px;
+$line: rgba($secondary-color, 0.1);
+
+.board-container{
+    color: $secondary-color;
+    flex-grow: 1;
+    background: 
+    repeating-linear-gradient(
+        to bottom,
+        $line, 
+        $cellLeftTop,  
+        $cellRightBottom
+    ),
+    repeating-linear-gradient(
+        to right,
+        $line, 
+        $cellLeftTop,  
+        $cellRightBottom
+    );
+}

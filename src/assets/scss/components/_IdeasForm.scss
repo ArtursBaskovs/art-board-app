@@ -2,10 +2,12 @@
     
     display: flex;
     flex-direction: column; 
+    justify-content: center;
+    align-items: center;
     gap: 20px; 
     width: 100%;
     
-    @include sidebar-block-border;
+    //@include sidebar-block-border;
 
     p {
         font-size: 0.875rem;
@@ -15,21 +17,80 @@
     input {
         min-width: 78%;
     }
+
+    
+    padding: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    color: white;
+    border-width: 5px;
+    border-style: solid;
+    border-image: 
+      linear-gradient(
+        to bottom, 
+        $primary-color,
+        $secondary-color, 
+        rgba(0, 0, 0, 0)
+      ) 1 100%;
+    border-radius: 5px !important;
+
+
+
 }
+.add-topic-label {
+    display: flex;
+    flex-wrap: wrap; 
+    flex-direction: column; 
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: bold; 
+    color: $text-color;
+    justify-content: space-between;
+    gap: .6rem;
+    width: 100%;
+
+    border-bottom: 1px solid rgba($secondary-color, 0.4);
+    border-radius: 3px 3px 3px 3px;
+    padding-bottom: 1rem;
+   
+
+    
+    button {
+        font-size: 0.8em !important;
+    }
+}
+
+
+
 .ideasForm small {
     margin: 0;
     color: rgba($text-color, .5);
     text-align: left;
 }
-.ideasForm label {
+
+.btn-container {
+    @include row-container(1em, center);
+}
+.btn-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    button {
+        font-size: 0.8em;
+    }
+}
+.topic-block {
+    width: 100%;
     display: flex;
     flex-direction: row; 
     align-items: center;
     font-size: 0.875rem;
     font-weight: bold; 
     color: $text-color;
-    gap: 1rem;
-}
-.btn-container {
-    @include row-container(1em, center);
+    justify-content: space-between;
+    gap: .4rem;
+    p{
+        text-align: center;
+    }
 }

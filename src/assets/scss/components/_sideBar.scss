@@ -14,7 +14,8 @@
     position: fixed;
     width: 20vw;
     top: 0;
-  
+    
+    position: relative;
 }
 
 .sideBar {
@@ -34,5 +35,7 @@
 }
 
 .idea-tool-window{
-    @include fixed-center;
+    position: fixed;
+    top: 0;  /* Настроить по вертикали */
+    left: 20vw;  /* Сдвигаем блок за пределы родителя */
 }
