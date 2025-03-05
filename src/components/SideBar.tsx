@@ -14,12 +14,12 @@ const SideBar: React.FC = () => {
             <aside className="sideBar">
                 <nav className="sideBar_nav">
                     
-                    <ToolsProvider>
+                        
                         <Tools ></Tools>
                         <div className="idea-tool-window">
                             <IdeasForm></IdeasForm>
                         </div>
-                    </ToolsProvider>
+                    
                 </nav>
             </aside>
         </div>

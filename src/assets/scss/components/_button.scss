@@ -9,16 +9,41 @@ button {
     transition: background-color 0.4s ease; 
 }
 
+button:focus {
+  outline: none;
+  border: none;  
+}
+
 .icon-btn {
   padding: 6px 16px;
 }
 
 button:hover {
+  background: radial-gradient(
+    circle at bottom,
+    rgba(#5ac9d1, 0.4) 1%,
+    rgba($primary-color, .4) 100%
+  );
+  outline: 0;
+  border: none;
+}
+
+.active-true{
+  background: radial-gradient(
+    circle at bottom,
+    rgba(#f7ffcd, 0.5) 1%,
+    rgba($primary-color, .2) 100%
+  );
+  outline: 0;
+  border: none;
+
+  &:hover {
     background: radial-gradient(
       circle at bottom,
-      rgba(#5ac9d1, 0.4) 1%,
-      rgba($primary-color, .4) 100%
-    );
-    outline: 0;
-    border: none;
+      rgba(#fcfcfc, 0.4) 1%,
+      rgba($primary-color, .0) 100%
+    ) !important;
+    
+  }
+
 }

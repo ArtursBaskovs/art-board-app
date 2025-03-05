@@ -29,7 +29,7 @@ const IdeasForm: React.FC = () => {
     const [topicElements, setTopicElements] = useState<string[]>([]);
     const [isDisabled, setIsDisabled] = useState(false);
     const [countDown, setCountDown] = useState<number>();
-    const {isFormVisible} = useTools();
+    const {isFormVisible, noteBlocks, mutateNoteBlocksState} = useTools();
     
 
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -133,6 +133,11 @@ const IdeasForm: React.FC = () => {
 
     //saved idea will create something on board that contains idea text, removing will be handled in board
     const saveIdeaBtn = (key: string) => {
+        const value = inputValues[key];
+        const indexForID = Object.values(noteBlocks).length;
+        const idName = key.replace(/ /g, "_") + indexForID;
+        mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: "50%", posY: "50%"} );
+        console.log(noteBlocks);
         
     }
 
