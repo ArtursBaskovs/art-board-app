@@ -28,7 +28,7 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     const mutateNoteBlocksState = (object: NoteBlock) => {
         setNoteBlocks(prevBlocks => ({
             ...prevBlocks,
-            [object.id]: object, 
+            [object.id]: object, //object key is same with object id prop. So specify target object by id prop inside it
         }));
     };
     const handleNoteInput = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {

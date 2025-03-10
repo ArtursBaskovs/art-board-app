@@ -23,8 +23,9 @@ $line: rgba($secondary-color, 0.1);
 .note-block{
     position: absolute;
     background-color: #64bbac;
-    
+    padding: 10px !important;
     textarea {
+        
         color: $dark-text-color;
         border: none !important;
         rows: "5";
@@ -32,6 +33,7 @@ $line: rgba($secondary-color, 0.1);
             border:none !important;
             box-shadow: none !important;
         }
+
     }
 
    
