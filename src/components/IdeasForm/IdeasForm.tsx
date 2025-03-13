@@ -136,7 +136,7 @@ const IdeasForm: React.FC = () => {
         const value = inputValues[key];
         const indexForID = Object.values(noteBlocks).length;
         const idName = key.replace(/ /g, "_") + indexForID;
-        mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: "50%", posY: "50%"} );
+        mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: "50", posY: "50"} );
         console.log(noteBlocks);
         
     }

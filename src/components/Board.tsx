@@ -10,7 +10,8 @@ interface Padding {
 }
 const Board: React.FC = () => {
     const {noteBlocks, handleNoteInput, mutateNoteBlocksState} = useTools();
-    const constraintsRef = useRef(null);
+    const refBoard = useRef<HTMLDivElement | null>(null);
+    const refField = useRef<HTMLDivElement | null>(null);
     const [xPositionOffset, setXPositionOffset] = useState<number | null>(null);
     const [yPositionOffset, setYPositionOffset] = useState<number | null>(null);
     const [boardPadding, setBoardPadding] = useState<Padding>({
@@ -19,6 +20,17 @@ const Board: React.FC = () => {
         bottom: 0,
         left: 0
     });
+
+    useEffect(() => {
+        const board = document.getElementById("board1");
+        if (board) {
+            board.scrollIntoView({
+            behavior: "auto",
+            block: "center",
+            inline: "center",
+          });
+        }
+      }, []);
 
     const getElementPosition = (event: React.MouseEvent<HTMLDivElement>) => {
         const currentElement = event.currentTarget;
@@ -47,7 +59,7 @@ const Board: React.FC = () => {
         mutateNoteBlocksState(currentObjByKey);
         console.log(noteBlocks); 
     }
-
+    //it was useless, maybe I will find usage later
     const expandBoard = (posX: string, posY:string) => {
         //console.log(posY)
         const x: number = +posX;
@@ -88,43 +100,77 @@ const Board: React.FC = () => {
     }
     const handleBoardDrag = (event: React.MouseEvent<HTMLDivElement>) => {
         const {posX, posY} = getElementPosition(event);
-
-        expandBoard(posX, posY);
     }
-//почему-то не меняется падинг в стиле, только один раз, потом разберусь
-    
-    return (
-        <motion.div 
-            drag className="board-container" 
-            dragMomentum={false} 
-            ref={constraintsRef}
-            onMouseUp={(event) => handleBoardDrag(event)}
-            style={{
-                padding: `${boardPadding.top}px ${boardPadding.right}px ${boardPadding.bottom}px ${boardPadding.left}px`
-            }}
-        >
-${boardPadding.top}
 
-            {Object.values(noteBlocks).map((note, index) => {
-                //addToInputs(note.id, note.value);
-                return (
-                    <motion.div drag dragConstraints={constraintsRef} dragMomentum={false}
-                        key={note.id}
-                        id={note.id}
-                        className={note.className} 
-                        style={{position: "absolute", left: note.posX, top: note.posY}}
-                        onMouseUp={(event) => updateNoteData(event)}
-                    >
-                        <textarea 
-                            rows={10} 
-                            name={note.id}
-                            value={note.value}
-                            onChange={handleNoteInput}
-                        />
-                    </motion.div>
-                );
-            })}
-        </motion.div>
+
+    const getBoardSize = () => {
+        const board = refBoard.current;
+        let width = "";
+        let height = "";
+        if (board) {
+            const width = window.getComputedStyle(board).getPropertyValue("width"); 
+            const height = window.getComputedStyle(board).getPropertyValue("height"); 
+            return {
+                width,
+                height
+            };
+        }
+        return { width: 0, height: 0 }; 
+    }
+    const updateContraintFieldSize = () => {
+        const {width, height} = getBoardSize();
+        const expandBy = 2;
+        const expandWidth = parseInt(String(width), 10) * expandBy;
+        const expandHeight = parseInt(String(height), 10) * expandBy;
+        const field = refField.current;
+        if (field) {
+            field.style.width = `${expandWidth}px`; 
+            field.style.height = `${expandHeight}px`;
+        }
+    }
+    //maybe add button to expand board later
+    useEffect(() => {
+        updateContraintFieldSize();
+      }, []);
+
+
+    return (
+        <div className="contraint-field" ref={refField}>
+            <motion.div 
+                id="board1"
+                drag className="board-container" 
+                dragMomentum={false} 
+                dragConstraints={refField}
+                ref={refBoard}
+                onMouseUp={(event) => handleBoardDrag(event)}
+                style={{
+                    padding: `${boardPadding.top}px ${boardPadding.right}px ${boardPadding.bottom}px ${boardPadding.left}px`
+                }}
+            >
+
+
+                {Object.values(noteBlocks).map((note, index) => {
+                    //addToInputs(note.id, note.value);
+                    return (
+                        <motion.div drag dragConstraints={refBoard} dragMomentum={false}
+                            key={note.id}
+                            id={note.id}
+                            className={note.className} 
+                            initial={{ x: Number(note.posX), y: Number(note.posY) }} // Приводим к числу
+                            onMouseDown={(event) => updateNoteData(event)}
+                            onMouseUp={(event) => updateNoteData(event)}
+                        >
+                            <textarea 
+                                rows={10} 
+                                name={note.id}
+                                value={note.value}
+                                onChange={handleNoteInput}
+                            />
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
+        </div>
     );
 }
 export default Board;

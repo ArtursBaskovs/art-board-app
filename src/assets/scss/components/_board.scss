@@ -1,13 +1,28 @@
-$cellLeftTop: rgba($primary-color, 0.01) 1.8px;
-$cellRightBottom: rgba($primary-color, .01) 32px;
+$cellLeftTop: rgba($primary-color, 0.02) 1.8px;
+$cellRightBottom: rgba($primary-color, .02) 32px;
 $line: rgba($secondary-color, 0.1);
+.contraint-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //width: 8000px !important;
+    //height: 8000px !important;
+  
+}
 
+.board-container {
+    width: 4000px !important;
+    height: 4000px;
+ 
+    min-width: 4000px !important;
+    max-width: 4000px !important;
+}
 .board-container{
-    overflow: visible;
-    //padding-bottom: 100px;
+
 
     color: $secondary-color;
     flex-grow: 1;
+    background-color: rgba(255, 255, 255, 0.041) !important;
     background: 
     repeating-linear-gradient(
         to bottom,

@@ -1,5 +1,5 @@
 .sideBar-container {
-    background-color: $panel-background-color;
+    background-color: $panel-background-color !important;
     overflow: hidden;
 
     //display: none; later
@@ -15,7 +15,7 @@
     width: 20vw;
     top: 0;
     
-    position: relative;
+   
 }
 
 .sideBar {
