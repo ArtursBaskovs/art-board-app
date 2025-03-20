@@ -9,7 +9,7 @@ interface Padding {
     left: number
 }
 const Board: React.FC = () => {
-    const {noteBlocks, handleNoteInput, mutateNoteBlocksState} = useTools();
+    const {noteBlocks, handleNoteInput, mutateNoteBlocksState, getCurrentElementPosition, currentCursor, noteTool} = useTools();
     const refBoard = useRef<HTMLDivElement | null>(null);
     const refField = useRef<HTMLDivElement | null>(null);
     const [xPositionOffset, setXPositionOffset] = useState<number | null>(null);
@@ -32,24 +32,11 @@ const Board: React.FC = () => {
         }
       }, []);
 
-    const getElementPosition = (event: React.MouseEvent<HTMLDivElement>) => {
-        const currentElement = event.currentTarget;
-        const styleTransformValue = window.getComputedStyle(currentElement).getPropertyValue("transform"); 
-        const transformData = styleTransformValue.split(`,`);
-        const posX = transformData[4].trim();
-        const posY = transformData[5].replace(")", "").trim();
-        //console.log(posX + " " + posY);
 
-        return {
-            posX,
-            posY
-        }
-    }
-
-    const updateNoteData = (event: React.MouseEvent<HTMLDivElement>) => {
-        const {posX, posY} = getElementPosition(event);
+    const updateNoteData = (event: React.MouseEvent<HTMLElement>) => {
+        const {posX, posY} = getCurrentElementPosition(event);
         const currentDivKey = event.currentTarget.id;
-        //console.log(currentDivKey);
+        
         const updatedObj = {...noteBlocks};
         const currentObjByKey = updatedObj[currentDivKey];
 
@@ -57,7 +44,8 @@ const Board: React.FC = () => {
         currentObjByKey.posY = posY;
         
         mutateNoteBlocksState(currentObjByKey);
-        console.log(noteBlocks); 
+        //console.log(posX + "<=x y=>" + posY);
+        //console.log(noteBlocks); 
     }
     //it was useless, maybe I will find usage later
     const expandBoard = (posX: string, posY:string) => {
@@ -98,8 +86,8 @@ const Board: React.FC = () => {
         
         
     }
-    const handleBoardDrag = (event: React.MouseEvent<HTMLDivElement>) => {
-        const {posX, posY} = getElementPosition(event);
+    const handleBoardDrag = (event: React.MouseEvent<HTMLElement>) => {
+        const {posX, posY} = getCurrentElementPosition(event);
     }
 
 
@@ -131,11 +119,14 @@ const Board: React.FC = () => {
     //maybe add button to expand board later
     useEffect(() => {
         updateContraintFieldSize();
-      }, []);
+    }, []);
 
 
     return (
-        <div className="contraint-field" ref={refField}>
+        <div 
+            className="contraint-field" ref={refField}
+            style={{ cursor: `url(${currentCursor}) 16 16, auto` }}
+        >
             <motion.div 
                 id="board1"
                 drag className="board-container" 
@@ -143,11 +134,10 @@ const Board: React.FC = () => {
                 dragConstraints={refField}
                 ref={refBoard}
                 onMouseUp={(event) => handleBoardDrag(event)}
-                style={{
-                    padding: `${boardPadding.top}px ${boardPadding.right}px ${boardPadding.bottom}px ${boardPadding.left}px`
-                }}
+                //passing not unsable arguments, because on second function call i don`t need them, I have stored what needed in reference var
+                onClick={() => noteTool({ id: "9999", className: "notNote", value: "", posX: '10', posY: '10' })} 
             >
-
+                
 
                 {Object.values(noteBlocks).map((note, index) => {
                     //addToInputs(note.id, note.value);
@@ -156,7 +146,7 @@ const Board: React.FC = () => {
                             key={note.id}
                             id={note.id}
                             className={note.className} 
-                            initial={{ x: Number(note.posX), y: Number(note.posY) }} // Приводим к числу
+                            initial={{ x: Number(note.posX), y: Number(note.posY) }}
                             onMouseDown={(event) => updateNoteData(event)}
                             onMouseUp={(event) => updateNoteData(event)}
                         >

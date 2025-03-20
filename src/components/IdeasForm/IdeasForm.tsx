@@ -29,7 +29,8 @@ const IdeasForm: React.FC = () => {
     const [topicElements, setTopicElements] = useState<string[]>([]);
     const [isDisabled, setIsDisabled] = useState(false);
     const [countDown, setCountDown] = useState<number>();
-    const {isFormVisible, noteBlocks, mutateNoteBlocksState} = useTools();
+    //tool context ////////////////////////////////////////////////
+    const {isFormVisible, noteBlocks, mutateNoteBlocksState, currentCursor, toolCursorHandler, cursors, noteTool} = useTools();
     
 
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -132,12 +133,29 @@ const IdeasForm: React.FC = () => {
     }
 
     //saved idea will create something on board that contains idea text, removing will be handled in board
-    const saveIdeaBtn = (key: string) => {
+    const saveIdeaBtn = (key: string, event: React.MouseEvent<HTMLElement>) => {
         const value = inputValues[key];
         const indexForID = Object.values(noteBlocks).length;
         const idName = key.replace(/ /g, "_") + indexForID;
-        mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: "50", posY: "50"} );
-        console.log(noteBlocks);
+        //const {posX, posY} = getCurrentElementPosition(event);
+        //короче после нажатия этой кнопки инфа уносится в в какое то состояние которое ждёт нажатия и получения координат
+        //потом я уже там как-то вызываю mutate функцию чтобы создать блок, передаю ей инфу отсюда что выше
+        //та функция создания будет требовать параметры для всех
+        if(currentCursor == cursors.default) {
+            toolCursorHandler(cursors.note);
+            
+        } 
+        console.log(currentCursor);
+
+        const currentBtn = event.currentTarget;
+        const coordinates = currentBtn.getBoundingClientRect();
+        const posX = coordinates.left;
+        const posY = coordinates.top; // не пойдёт такое. Надо сделать так чтобы я кликом выберал куда ставить. Надо узнать как менять курсор чтобы обозначить что я собираюсь ставить
+        //mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: `${posX}`, posY: `${posY}`} );
+        noteTool( {id: idName, className: 'note-block', value: value, posX: `${posX}`, posY: `${posY}`} );
+        //console.log(noteBlocks);
+        console.log(posX, posY);
+        
         
     }
 
@@ -175,7 +193,7 @@ const IdeasForm: React.FC = () => {
                                     
                                 />
                             <div className="btn-column">
-                                <button type="button" onClick={() => saveIdeaBtn(key)}>SAVE</button>
+                                <button type="button" onClick={(event) => saveIdeaBtn(key, event)}>SAVE</button>
                                 <button type="button" onClick={() => clearText(key)}>CLEAR</button>
                             </div>
                         </div>

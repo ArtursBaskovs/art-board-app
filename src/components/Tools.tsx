@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StickyNoteIcon from "../assets/images/StickyNoteIcon";
 import ColorPaletteIcon from "../assets/images/ColorPaletteIcon";
 import PencilIcon from "../assets/images/PencilIcon";
@@ -14,10 +14,11 @@ const Tools: React.FC = () => {
     const [toolIsActive, setToolIsActive] = useState<{
         [key: string]: boolean;
     }>({
-        generateIdea: false
+        generateIdea: false,
+        note: false
     });
     //tools context imports | Завтра вспомни че это и эту фигню используй в форме с другим импортом для скрытия и показвания
-    const {ideasFormVisibilityToggle} = useTools();
+    const {ideasFormVisibilityToggle, cursors, currentCursor, toolCursorHandler} = useTools();
 
     const toolButtonHandler = (buttonName: string) => {
         const toolsKeys = Object.keys(toolIsActive);
@@ -25,13 +26,42 @@ const Tools: React.FC = () => {
             console.warn(buttonName + " does not exist list of tools");
             return;
         }
+        switchToolButtonsActivity(buttonName);
+        const localIsToolActive = !toolIsActive[buttonName]; //use state async nature does not allow me to use updated value further in this function
 
-        setToolIsActive(prevObject => ({
-            ...prevObject,
-            [buttonName]: !prevObject[buttonName], 
-        }))
+        //changing cursor depending on whick tool is activating or deactivating by one of tool button
+        /* I was checking if values are correct
+        const keyOfThisToolCursor = Object.keys(cursors).find(key => cursors[key] == buttonName);
         console.log(toolIsActive[buttonName]);
+        console.log("cursor for this tool is " + keyOfThisToolCursor + " its path is " + cursors[`${buttonName}`] + " it is active? - " + localIsToolActive);
+        */
+        if(localIsToolActive && cursors[buttonName]) {
+            toolCursorHandler(cursors[buttonName]);
+        } else {
+            toolCursorHandler(cursors.default);
+            console.log(cursors.default);
+        }
+        
+        //wtf?
+        /*const keyOfCurrentCursor = Object.keys(cursors).find(key => cursors[key] === currentCursor);
+        if(buttonName == keyOfCurrentCursor) {
 
+        }*/
+
+    }
+
+    const switchToolButtonsActivity = (buttonName: string) => {
+        setToolIsActive(prevObject => {
+            const allFalse: { [key: string]: boolean } = {};
+            Object.keys(prevObject).forEach(key => {
+                if (key === buttonName) {
+                    allFalse[key] = !prevObject[key]; 
+                } else {
+                    allFalse[key] = false; 
+                }
+            });
+            return allFalse;
+        });
     }
 
     return (
@@ -58,7 +88,7 @@ const Tools: React.FC = () => {
                 🦶
             </button>
 
-            <button className={`icon-btn ${toolIsActive}`}
+            <button className={`icon-btn active-${toolIsActive.note}`}
                 onClick={() => {
                     toolButtonHandler('note');
                 }}>
