@@ -9,7 +9,15 @@ interface Padding {
     left: number
 }
 const Board: React.FC = () => {
-    const {noteBlocks, handleNoteInput, mutateNoteBlocksState, getCurrentElementPosition, currentCursor, noteTool} = useTools();
+    const {
+        noteBlocks, 
+        handleNoteInput,
+        mutateNoteBlocksState,
+        getCurrentElementPosition,
+        currentCursor,
+        noteTool,
+        temporaryData
+    } = useTools();
     const refBoard = useRef<HTMLDivElement | null>(null);
     const refField = useRef<HTMLDivElement | null>(null);
     const [xPositionOffset, setXPositionOffset] = useState<number | null>(null);
@@ -47,45 +55,7 @@ const Board: React.FC = () => {
         //console.log(posX + "<=x y=>" + posY);
         //console.log(noteBlocks); 
     }
-    //it was useless, maybe I will find usage later
-    const expandBoard = (posX: string, posY:string) => {
-        //console.log(posY)
-        const x: number = +posX;
-        const y: number = +posY;
-        //left and right padding changhe when dragging further than before to left or right
-        if(x > 0 && x > boardPadding.left) {
-            setBoardPadding(prevPadding => ({
-                ...prevPadding, 
-                left: x
-            }));
-            //console.log('+ ' + boardPadding.left)
-        }
-        
-        if(x < 0 && x < boardPadding.right) {
-            setBoardPadding(prevPadding => ({
-                ...prevPadding, 
-                right: x
-            }));
-            //console.log('- ' + boardPadding.right)
-        }
-        //top and bottom padding changhe when dragging further than before to top or bottom
-        if(y > 0 && y > boardPadding.top) {
-            setBoardPadding(prevPadding => ({
-                ...prevPadding, 
-                top: y
-            }));
-            console.log('+ ' + boardPadding.top)
-        }
-        if(y < 0 && y < boardPadding.bottom) {
-            setBoardPadding(prevPadding => ({
-                ...prevPadding, 
-                bottom: y
-            }));
-            console.log('- ' + boardPadding.bottom)
-        }
-        
-        
-    }
+
     const handleBoardDrag = (event: React.MouseEvent<HTMLElement>) => {
         const {posX, posY} = getCurrentElementPosition(event);
     }
@@ -121,6 +91,37 @@ const Board: React.FC = () => {
         updateContraintFieldSize();
     }, []);
 
+    const handleToolClickOnBoard = (event: React.MouseEvent<HTMLElement>) => {
+        const posX = event.nativeEvent.offsetX;
+        const posY = event.nativeEvent.offsetY;
+        //I get temporary data only when I create note from ideasForm
+        //console.log('temporaryData.current type:', typeof temporaryData, " its "+ temporaryData );
+        if (temporaryData.current && typeof temporaryData.current === 'object' && 'id' in temporaryData.current) { 
+            temporaryData.current = {
+                ...temporaryData.current,
+                posX: `${posX}`,
+                posY: `${posY}`,
+            };
+            console.log("temporaryData.current before check:", temporaryData.current);
+            console.log("Does it have an ID?", temporaryData.current?.id);
+            noteTool(temporaryData.current); 
+            temporaryData.current = null;
+
+        } else {
+            const objectCount = Object.values(noteBlocks).length + 1;
+            const objName = `${objectCount}nd_note`;
+
+            noteTool({
+                id: objName,
+                className: 'note-block',
+                value: '',
+                posX: `${posX}`,
+                posY: `${posY}`,
+            });
+            temporaryData.current = null;
+        }
+        console.log(noteBlocks);
+    }
 
     return (
         <div 
@@ -134,8 +135,7 @@ const Board: React.FC = () => {
                 dragConstraints={refField}
                 ref={refBoard}
                 onMouseUp={(event) => handleBoardDrag(event)}
-                //passing not unsable arguments, because on second function call i don`t need them, I have stored what needed in reference var
-                onClick={() => noteTool({ id: "9999", className: "notNote", value: "", posX: '10', posY: '10' })} 
+                onClick={(event) => handleToolClickOnBoard(event)} 
             >
                 
 

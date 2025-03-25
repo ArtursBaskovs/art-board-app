@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 import cursors from "../assets/cursors/note.svg";
-interface NoteBlock {
+interface htmlBlock {
     id: string;
     className: string;
     value: string;
@@ -9,16 +9,17 @@ interface NoteBlock {
 }
 
 interface ToolsContextType {
-    ideasFormVisibilityToggle: () => void;
+    ideasFormVisibilityToggle: (isVisible: boolean) => void;
     isFormVisible: boolean;
-    noteBlocks: { [key: string]: NoteBlock }; 
-    mutateNoteBlocksState: (arrayOfObjects: NoteBlock) => void;
+    noteBlocks: { [key: string]: htmlBlock }; 
+    mutateNoteBlocksState: (arrayOfObjects: htmlBlock) => void;
     handleNoteInput: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     getCurrentElementPosition: (event: React.MouseEvent<HTMLElement>) => {posX: string, posY: string};
     currentCursor: string;
     toolCursorHandler: (toolName: string) => void;
     cursors: Record<string, string>;
-    noteTool: (arrayOfObjects: NoteBlock) => void;
+    noteTool: (arrayOfObjects: htmlBlock) => void;
+    temporaryData: React.MutableRefObject<htmlBlock | null>;
 }
 
 //undifiend bc context requires garanteed value
@@ -28,15 +29,16 @@ export const ToolsContext = createContext<ToolsContextType | null>(null);
 export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
     //object for generating note hmtl elements
-    const [noteBlocks, setNoteBlocks] = useState<{[key: string]: NoteBlock}>({});
+    const [noteBlocks, setNoteBlocks] = useState<{[key: string]: htmlBlock}>({});
     const cursors: Record<string, string> = {
         default: '/def.svg',
         note: '/cursors/note.svg',
     };
     const [currentCursor, setCurrentCursor] = useState<string>(cursors.default);
-    const temporaryData = useRef<any>(null);
-    
-    const mutateNoteBlocksState = (object: NoteBlock) => {
+    const temporaryData = useRef<htmlBlock | null>(null);
+
+
+    const mutateNoteBlocksState = (object: htmlBlock) => {
         setNoteBlocks(prevBlocks => ({
             ...prevBlocks,
             [object.id]: object, //object key is same with object id prop. So specify target object by id prop inside it
@@ -54,8 +56,9 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
         }));
     }
 
-    const ideasFormVisibilityToggle = () => {
-        setIsFormVisible((prevVisibility) => !prevVisibility);
+    const ideasFormVisibilityToggle = (isVisible: boolean) => {
+        //setIsFormVisible((prevVisibility) => !prevVisibility);
+        setIsFormVisible((prevVisibility) => isVisible);
     };
 
     const getCurrentElementPosition = (event: React.MouseEvent<HTMLElement>) => {
@@ -78,22 +81,25 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     const toolCursorHandler = (toolName: string) => {
         console.log(toolName);
         setCurrentCursor(toolName);
-        if(toolName != cursors.default) {
-            getClickPosition();
-        }
     }
+
+    
     //creates note with data it recieves after click on board
-    const noteTool = (object: NoteBlock) => {
+    const noteTool = (object: htmlBlock) => {
+        //when note is created with ideas form
         if(currentCursor != cursors.note) temporaryData.current = object; //store temporary data for second call of this function
-        if(currentCursor == cursors.note) {
-            getClickPosition(); //position where clicked on board
+        if(currentCursor == cursors.note && temporaryData.current != null) { //second call after cursor becomes note tool
             mutateNoteBlocksState(temporaryData.current);
             setCurrentCursor(cursors.default);
+            //temporaryData.current = {};
+        }
+        //when note is created using only note tool
+        if(currentCursor == cursors.note && temporaryData.current == null) {
+            console.log("TRYING note tool", object);
+            mutateNoteBlocksState(object);
         }
     }
-    const getClickPosition = () => {
 
-    }
 
     return (
         <ToolsContext.Provider value={{ 
@@ -106,7 +112,8 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
             toolCursorHandler,
             currentCursor,
             cursors,
-            noteTool
+            noteTool,
+            temporaryData
         }}>
             {children}
         </ToolsContext.Provider>

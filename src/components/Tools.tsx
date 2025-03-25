@@ -18,7 +18,7 @@ const Tools: React.FC = () => {
         note: false
     });
     //tools context imports | Завтра вспомни че это и эту фигню используй в форме с другим импортом для скрытия и показвания
-    const {ideasFormVisibilityToggle, cursors, currentCursor, toolCursorHandler} = useTools();
+    const {ideasFormVisibilityToggle, cursors, currentCursor, toolCursorHandler, isFormVisible} = useTools();
 
     const toolButtonHandler = (buttonName: string) => {
         const toolsKeys = Object.keys(toolIsActive);
@@ -41,34 +41,29 @@ const Tools: React.FC = () => {
             toolCursorHandler(cursors.default);
             console.log(cursors.default);
         }
-        
-        //wtf?
-        /*const keyOfCurrentCursor = Object.keys(cursors).find(key => cursors[key] === currentCursor);
-        if(buttonName == keyOfCurrentCursor) {
-
-        }*/
-
     }
 
     const switchToolButtonsActivity = (buttonName: string) => {
         setToolIsActive(prevObject => {
             const allFalse: { [key: string]: boolean } = {};
             Object.keys(prevObject).forEach(key => {
-                if (key === buttonName) {
+                if(key === buttonName) {
                     allFalse[key] = !prevObject[key]; 
-                } else {
-                    allFalse[key] = false; 
+                }
+                if(key != buttonName) {
+                    allFalse[key] = false; //everything else false/inactive button
                 }
             });
             return allFalse;
         });
+        if(buttonName != 'generateIdea') ideasFormVisibilityToggle(false);
     }
 
     return (
         <div className="tools-container">
             <button className={`icon-btn active-${toolIsActive.generateIdea}`}
             onClick={() => {
-                ideasFormVisibilityToggle(); 
+                ideasFormVisibilityToggle(!isFormVisible); 
                 toolButtonHandler('generateIdea');
             }}>
                 <SearchIcon />
