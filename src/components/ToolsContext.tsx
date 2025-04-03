@@ -6,13 +6,15 @@ interface htmlBlock {
     value: string;
     posX: string;
     posY: string;
+    height: number;
+    width: number;
 }
 
 interface ToolsContextType {
     ideasFormVisibilityToggle: (isVisible: boolean) => void;
     isFormVisible: boolean;
     noteBlocks: { [key: string]: htmlBlock }; 
-    mutateNoteBlocksState: (arrayOfObjects: htmlBlock) => void;
+    mutateNoteBlocksState: (arrayOfObjects: htmlBlock, doWhat?: "remove") => void;
     handleNoteInput: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     getCurrentElementPosition: (event: React.MouseEvent<HTMLElement>) => {posX: string, posY: string};
     currentCursor: string;
@@ -37,8 +39,17 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     const [currentCursor, setCurrentCursor] = useState<string>(cursors.default);
     const temporaryData = useRef<htmlBlock | null>(null);
 
-
-    const mutateNoteBlocksState = (object: htmlBlock) => {
+    //will add new object by default
+    const mutateNoteBlocksState = (object: htmlBlock, doWhat?: "remove") => {
+        if (doWhat === "remove") {
+            const updBlocks = { ...noteBlocks };
+            delete updBlocks[object.id];
+            setNoteBlocks(updBlocks);
+            return;
+        }
+        if (doWhat === "edit") {
+            
+        }
         setNoteBlocks(prevBlocks => ({
             ...prevBlocks,
             [object.id]: object, //object key is same with object id prop. So specify target object by id prop inside it

@@ -1,4 +1,15 @@
     //it was useless, maybe I will find usage later
+
+
+    const [xPositionOffset, setXPositionOffset] = useState<number | null>(null);
+    const [yPositionOffset, setYPositionOffset] = useState<number | null>(null);
+    const [boardPadding, setBoardPadding] = useState<Padding>({
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+    });
+
     const expandBoard = (posX: string, posY:string) => {
         //console.log(posY)
         const x: number = +posX;

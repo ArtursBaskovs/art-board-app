@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTools } from "./ToolsContext";
-import { motion } from "motion/react"
+import { motion, useMotionValue } from "motion/react"
 
 interface Padding {
     top: number,
@@ -20,14 +20,8 @@ const Board: React.FC = () => {
     } = useTools();
     const refBoard = useRef<HTMLDivElement | null>(null);
     const refField = useRef<HTMLDivElement | null>(null);
-    const [xPositionOffset, setXPositionOffset] = useState<number | null>(null);
-    const [yPositionOffset, setYPositionOffset] = useState<number | null>(null);
-    const [boardPadding, setBoardPadding] = useState<Padding>({
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-    });
+    const dotTopLeft = useRef<HTMLButtonElement | null>(null);
+    const startingPos = useRef({ x: '', y: '' });
 
     useEffect(() => {
         const board = document.getElementById("board1");
@@ -40,7 +34,7 @@ const Board: React.FC = () => {
         }
       }, []);
 
-
+    //updates position data on click and after click release
     const updateNoteData = (event: React.MouseEvent<HTMLElement>) => {
         const {posX, posY} = getCurrentElementPosition(event);
         const currentDivKey = event.currentTarget.id;
@@ -53,7 +47,7 @@ const Board: React.FC = () => {
         
         mutateNoteBlocksState(currentObjByKey);
         //console.log(posX + "<=x y=>" + posY);
-        //console.log(noteBlocks); 
+        console.log(noteBlocks); 
     }
 
     const handleBoardDrag = (event: React.MouseEvent<HTMLElement>) => {
@@ -63,8 +57,6 @@ const Board: React.FC = () => {
 
     const getBoardSize = () => {
         const board = refBoard.current;
-        let width = "";
-        let height = "";
         if (board) {
             const width = window.getComputedStyle(board).getPropertyValue("width"); 
             const height = window.getComputedStyle(board).getPropertyValue("height"); 
@@ -117,11 +109,76 @@ const Board: React.FC = () => {
                 value: '',
                 posX: `${posX}`,
                 posY: `${posY}`,
+                height: 220,
+                width: 220
             });
             temporaryData.current = null;
         }
-        console.log(noteBlocks);
+        //console.log(noteBlocks);
     }
+
+    const removeBlock = (id: string, className: string) => {
+        if(className == noteBlocks[id].className && noteBlocks[id]) {
+            console.log("will remove block with id:", id, " which class is", className);
+            mutateNoteBlocksState(noteBlocks[id], 'remove');
+        }
+    }
+    const blockSizePositionUpdate = (
+        blockID: string,
+        { posX, posY, height, width }: { 
+            posX?: string, 
+            posY?: string, 
+            height?: number, 
+            width?: number 
+        }
+      ) => {
+        const currentElementKey = blockID;
+        
+        const updatedObj = {...noteBlocks};
+        const currentObjByKey = {...updatedObj[currentElementKey]};
+       
+        if(posX !== undefined) currentObjByKey.posX = posX;
+        if(posY !== undefined) currentObjByKey.posY = posY; 
+        if(height !== undefined) currentObjByKey.height = height;
+        if(width !== undefined) currentObjByKey.width = width;
+
+        mutateNoteBlocksState(currentObjByKey);
+        //console.log("new posY:", posY, " w:", width);
+    }
+    //handles dot drags on resizible block
+    const handleDrag = React.useCallback(
+      (blockID: string, dragSide: string, blockHeight: number, blockWidth: number, posX: string, posY: string,
+      event: MouseEvent | TouchEvent | PointerEvent, 
+      info: { delta: { x: number; y: number } }
+    ) => {
+        
+        //let newHeight = blockHeight + info.delta.y;
+        let newHeight = blockHeight; 
+        let newY = parseFloat(posY);
+        let newX = parseFloat(posX);
+        let newWidth = blockWidth;
+        //change position and size depending on which button is dragged
+        if(dragSide == 'top') {
+            newHeight = newHeight - info.delta.y; 
+            newY = newY + info.delta.y;
+            blockSizePositionUpdate(blockID, {height: newHeight, posY: `${newY}`});
+        }
+        if(dragSide == 'bottom') {
+            newHeight = newHeight + info.delta.y; 
+            //newY = newY + info.delta.y;
+            blockSizePositionUpdate(blockID, {height: newHeight});
+        }
+        if(dragSide == 'right') {
+            newWidth = newWidth + info.delta.x;
+            blockSizePositionUpdate(blockID, {width: newWidth});
+        }
+        if(dragSide == 'left') {
+            newWidth = newWidth - info.delta.x;
+            newX = newX + info.delta.x;
+            blockSizePositionUpdate(blockID, {width: newWidth, posX: `${newX}`});
+        }
+        
+    }, [noteBlocks]);
 
     return (
         <div 
@@ -143,19 +200,76 @@ const Board: React.FC = () => {
                     //addToInputs(note.id, note.value);
                     return (
                         <motion.div drag dragConstraints={refBoard} dragMomentum={false}
+                            layout
                             key={note.id}
                             id={note.id}
-                            className={note.className} 
-                            initial={{ x: Number(note.posX), y: Number(note.posY) }}
+                            className={`${note.className} has-tools`} 
+                            //initial={{ x: Number(note.posX), y: Number(note.posY) }}
+                            animate={{ x: Number(note.posX), y: Number(note.posY)}} 
+                            transition={{
+                                type: "tween", duration: 0,
+                                layout: { duration: 0} 
+                              }}
+                            style={{ width: note.width, height: note.height }}
                             onMouseDown={(event) => updateNoteData(event)}
                             onMouseUp={(event) => updateNoteData(event)}
                         >
-                            <textarea 
-                                rows={10} 
-                                name={note.id}
-                                value={note.value}
-                                onChange={handleNoteInput}
-                            />
+                            <motion.div 
+                                className="resizible" 
+                                //animate={{width: 220, height: note.height}}
+                                //transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                            >
+                                <motion.button 
+                                    className="corner-dot top" 
+                                    drag='y'
+                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                                    dragElastic={0}
+                                    dragMomentum={false}
+                                    onDrag={(event, info) => handleDrag(note.id, "top", note.height, note.width, note.posX, note.posY, event, info)}
+                                >
+                                </motion.button>
+                                <motion.button 
+                                    className="corner-dot right"
+                                    drag='x'
+                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                                    dragElastic={0}
+                                    dragMomentum={false}
+                                    onDrag={(event, info) => handleDrag(note.id, "right", note.height, note.width, note.posX, note.posY, event, info)}
+                                >    
+                                </motion.button>
+                                <motion.button 
+                                    className="corner-dot bottom" 
+                                    drag='y'
+                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                                    dragElastic={0}
+                                    dragMomentum={false}
+                                    onDrag={(event, info) => handleDrag(note.id, "bottom", note.height, note.width, note.posX, note.posY, event, info)}
+                                >
+                                </motion.button>
+                                <motion.button 
+                                    className="corner-dot left"
+                                    drag='x'
+                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                                    dragElastic={0}
+                                    dragMomentum={false}
+                                    onDrag={(event, info) => handleDrag(note.id, "left", note.height, note.width, note.posX, note.posY, event, info)}
+                                >
+                                </motion.button>
+
+                                <div className="block-tool-container">
+                                    <button onClick={() => removeBlock(note.id, note.className)}>X</button>
+                                </div>
+                                <div className="block-content">
+                                    <textarea
+                                        style={{height: note.height - 70}} 
+                                        name={note.id}
+                                        value={note.value}
+                                        onChange={handleNoteInput}
+                                    />
+                                </div>
+                            </motion.div>
+
+
                         </motion.div>
                     );
                 })}

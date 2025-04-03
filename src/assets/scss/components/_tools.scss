@@ -4,3 +4,99 @@
     flex-wrap: wrap;
     gap: 1em;
 }
+
+
+.has-tools {
+    position: relative;
+    
+    .corner-dot {
+        position: absolute;
+        width: 0.8rem !important;
+        height: 0.8rem !important;
+        padding: 0;
+        cursor: pointer;
+        //background-color: inherit;
+        filter: brightness(3);
+        opacity: 0.9 !important;
+    }
+    .top { top: -8px; left:50%; }
+    .right { top: 50%; right: -8px; }
+    .bottom { bottom: -8px; left: 50%; }
+    .left { top: 50%; left: -8px; }
+}
+
+.block-tool-container {
+    display: flex;
+    justify-content: end;   
+    padding: 10px 0 10px 0;
+    button {
+        width: 1.2rem;
+        height: 1.2rem;
+        padding: 0.2rem;
+        font-size: 0.7em;
+        background-color: rgba($primary-color, 0.5);
+    }
+    
+}
+.block-tool-container, .corner-dot {
+    visibility: hidden;
+}
+.has-tools {
+    padding: 0 15px 15px 15px !important;
+    &:focus,
+    &:focus-within {
+        outline: 3px solid rgba($secondary-color, 0.2); 
+        border-radius: 10px;
+        .block-tool-container, .corner-dot {
+            visibility: visible;
+        }
+    }
+}
+.note-block{
+    position: absolute;
+
+    .block-content {
+        border-radius: 5px;
+        background-color: #64bbac;
+        padding: 10px !important;
+    }
+    textarea {
+        
+        color: $dark-text-color;
+        border: none !important;
+        
+        &:focus{
+            border:none !important;
+            box-shadow: none !important;
+        }
+
+    }
+
+   
+    ::-webkit-scrollbar {
+        width: 8px;  
+        height: 8px; 
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #888;  
+        border-radius: 4px;  
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #555; 
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f100;  
+    }
+
+ 
+}
+
+.resizible {
+    top: 20px;
+}
+
+.resizible textarea {
+    width: 100%;
+    box-sizing: border-box; 
+
+}
