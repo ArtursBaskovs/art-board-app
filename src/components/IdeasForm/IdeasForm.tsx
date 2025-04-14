@@ -152,7 +152,16 @@ const IdeasForm: React.FC = () => {
         const posX = coordinates.left;
         const posY = coordinates.top; // не пойдёт такое. Надо сделать так чтобы я кликом выберал куда ставить. Надо узнать как менять курсор чтобы обозначить что я собираюсь ставить
         //mutateNoteBlocksState( {id: idName, className: 'note-block', value: value, posX: `${posX}`, posY: `${posY}`} );
-        noteTool( {id: idName, className: 'note-block', value: value, posX: `${posX}`, posY: `${posY}`, height: 220, width: 220} );
+        noteTool( {
+            id: idName, 
+            className: 'note-block', 
+            value: value, posX: `${posX}`, 
+            posY: `${posY}`, 
+            height: 220, 
+            width: 220,
+            link: "",
+            type: "note"
+        } );
         //console.log(noteBlocks);
         console.log(posX, posY);
         

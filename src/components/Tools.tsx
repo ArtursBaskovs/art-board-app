@@ -11,14 +11,9 @@ import SearchIcon from "../assets/images/SearchIcon";
 
 
 const Tools: React.FC = () => {
-    const [toolIsActive, setToolIsActive] = useState<{
-        [key: string]: boolean;
-    }>({
-        generateIdea: false,
-        note: false
-    });
+
     //tools context imports | Завтра вспомни че это и эту фигню используй в форме с другим импортом для скрытия и показвания
-    const {ideasFormVisibilityToggle, cursors, currentCursor, toolCursorHandler, isFormVisible} = useTools();
+    const {toolIsActive, setToolIsActive, switchToolButtonsActivity, ideasFormVisibilityToggle, cursors, currentCursor, toolCursorHandler, isFormVisible} = useTools();
 
     const toolButtonHandler = (buttonName: string) => {
         const toolsKeys = Object.keys(toolIsActive);
@@ -43,21 +38,7 @@ const Tools: React.FC = () => {
         }
     }
 
-    const switchToolButtonsActivity = (buttonName: string) => {
-        setToolIsActive(prevObject => {
-            const allFalse: { [key: string]: boolean } = {};
-            Object.keys(prevObject).forEach(key => {
-                if(key === buttonName) {
-                    allFalse[key] = !prevObject[key]; 
-                }
-                if(key != buttonName) {
-                    allFalse[key] = false; //everything else false/inactive button
-                }
-            });
-            return allFalse;
-        });
-        if(buttonName != 'generateIdea') ideasFormVisibilityToggle(false);
-    }
+
 
     return (
         <div className="tools-container">
@@ -76,9 +57,9 @@ const Tools: React.FC = () => {
                 <PencilIcon />
             </button>
 
-            <button className={`icon-btn ${toolIsActive}`}
+            <button className={`icon-btn active-${toolIsActive.defaultPointer}`}
                 onClick={() => {
-                    toolButtonHandler('move');
+                    toolButtonHandler('defaultPointer');
                 }}>
                 🦶
             </button>
@@ -97,7 +78,7 @@ const Tools: React.FC = () => {
                 <TextIcon />
             </button>
 
-            <button className={`icon-btn ${toolIsActive}`}
+            <button className={`icon-btn active-${toolIsActive.image}`}
                 onClick={() => {
                    toolButtonHandler('image');
                 }}>

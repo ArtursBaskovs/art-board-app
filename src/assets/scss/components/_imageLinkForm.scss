@@ -1,0 +1,21 @@
+.imageLinkForm {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 30%;
+    transform: translate(-50%, -50%);
+    background-color: $panel-background-color;
+    border-radius: 10px;
+    z-index: 9999;
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    padding: 2em 3em 2em 3em;
+    input {
+        
+        background-color: rgba($secondary-color, .2 );
+    }
+    button {
+        margin-left: 1em;
+    }
+}

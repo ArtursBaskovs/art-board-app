@@ -8,6 +8,8 @@ interface htmlBlock {
     posY: string;
     height: number;
     width: number;
+    link: string;
+    type: string;
 }
 
 interface ToolsContextType {
@@ -15,13 +17,19 @@ interface ToolsContextType {
     isFormVisible: boolean;
     noteBlocks: { [key: string]: htmlBlock }; 
     mutateNoteBlocksState: (arrayOfObjects: htmlBlock, doWhat?: "remove") => void;
+    imageBlocks: { [key: string]: htmlBlock }; 
+    mutateImageBlockState: (arrayOfObjects: htmlBlock, doWhat?: "remove") => void;
     handleNoteInput: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     getCurrentElementPosition: (event: React.MouseEvent<HTMLElement>) => {posX: string, posY: string};
     currentCursor: string;
     toolCursorHandler: (toolName: string) => void;
     cursors: Record<string, string>;
     noteTool: (arrayOfObjects: htmlBlock) => void;
+    imageTool: (arrayOfObjects: htmlBlock) => void;
     temporaryData: React.MutableRefObject<htmlBlock | null>;
+    toolIsActive: { [key: string]: boolean }
+    setToolIsActive: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>; 
+    switchToolButtonsActivity: (buttonName: string) => void;
 }
 
 //undifiend bc context requires garanteed value
@@ -29,16 +37,42 @@ export const ToolsContext = createContext<ToolsContextType | null>(null);
 
 //provider will containt each tool function to share with children components
 export const ToolsProvider = ({ children }: { children: ReactNode }) => {
+    const [toolIsActive, setToolIsActive] = useState<{
+        [key: string]: boolean;
+    }>({
+        generateIdea: false,
+        note: false,
+        image: false,
+        defaultPointer: true,
+    });
+
     const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
     //object for generating note hmtl elements
     const [noteBlocks, setNoteBlocks] = useState<{[key: string]: htmlBlock}>({});
+    const [imageBlocks, setImageBlocks] = useState<{[key: string]: htmlBlock}>({});
     const cursors: Record<string, string> = {
         default: '/def.svg',
         note: '/cursors/note.svg',
+        image: 'cursors/image.svg'
     };
     const [currentCursor, setCurrentCursor] = useState<string>(cursors.default);
     const temporaryData = useRef<htmlBlock | null>(null);
 
+    const switchToolButtonsActivity = (buttonName: string) => {
+        setToolIsActive(prevObject => {
+            const allFalse: { [key: string]: boolean } = {};
+            Object.keys(prevObject).forEach(key => {
+                if(key === buttonName) {
+                    allFalse[key] = !prevObject[key]; 
+                }
+                if(key != buttonName) {
+                    allFalse[key] = false; //everything else false/inactive button
+                }
+            });
+            return allFalse;
+        });
+        if(buttonName != 'generateIdea') ideasFormVisibilityToggle(false);
+    }
     //will add new object by default
     const mutateNoteBlocksState = (object: htmlBlock, doWhat?: "remove") => {
         if (doWhat === "remove") {
@@ -47,12 +81,24 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
             setNoteBlocks(updBlocks);
             return;
         }
-        if (doWhat === "edit") {
-            
-        }
         setNoteBlocks(prevBlocks => ({
             ...prevBlocks,
             [object.id]: object, //object key is same with object id prop. So specify target object by id prop inside it
+        }));
+    };
+    // i don`t know if copying this function is ok in this case. 
+    // I don`t want to complicate it. aslo its esier when i know which blocks i try to modify when calling a function
+    // and feels more managable if i need to to something differently for images
+    const mutateImageBlockState  = (object: htmlBlock, doWhat?: "remove") => {
+        if (doWhat === "remove") {
+            const updBlocks = { ...imageBlocks };
+            delete updBlocks[object.id];
+            setImageBlocks(updBlocks);
+            return;
+        }
+        setImageBlocks(prevBlocks => ({
+            ...prevBlocks,
+            [object.id]: object, 
         }));
     };
     const handleNoteInput = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -90,7 +136,7 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     //section where cursor changes depending of selected tool. 
     // Then i get clicking position to place generated object where clicked
     const toolCursorHandler = (toolName: string) => {
-        console.log(toolName);
+        //console.log(toolName);
         setCurrentCursor(toolName);
     }
 
@@ -110,7 +156,14 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
             mutateNoteBlocksState(object);
         }
     }
-
+    const imageTool = (object: htmlBlock) => {
+        if(currentCursor == cursors.image || toolIsActive.image) {
+            console.log("TRYING image tool", object);
+            mutateImageBlockState(object);
+            switchToolButtonsActivity('defaultPointer');
+            
+        }
+    }
 
     return (
         <ToolsContext.Provider value={{ 
@@ -118,13 +171,19 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
             isFormVisible, 
             noteBlocks, 
             mutateNoteBlocksState, 
+            imageBlocks,
+            mutateImageBlockState,
             handleNoteInput,
             getCurrentElementPosition,
             toolCursorHandler,
             currentCursor,
             cursors,
             noteTool,
-            temporaryData
+            imageTool,
+            temporaryData,
+            toolIsActive,
+            setToolIsActive,
+            switchToolButtonsActivity
         }}>
             {children}
         </ToolsContext.Provider>

@@ -2,6 +2,7 @@ $cellLeftTop: rgba($primary-color, 0.02) 1.8px;
 $cellRightBottom: rgba($primary-color, .02) 32px;
 $line: rgba($secondary-color, 0.1);
 .contraint-field {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
