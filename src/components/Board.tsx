@@ -108,9 +108,9 @@ const Board: React.FC = () => {
     }, []);
 
     const handleToolClickOnBoard = (event: React.MouseEvent<HTMLElement>) => {
-
-        const posX = event.nativeEvent.offsetX;
-        const posY = event.nativeEvent.offsetY;
+        const boardRect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+        const posX = event.clientX - boardRect.left;
+        const posY = event.clientY - boardRect.top;
         
         
         if(currentCursor == cursors.note) {
@@ -200,10 +200,14 @@ const Board: React.FC = () => {
 
     }
 
-    const removeBlock = (id: string, className: string) => {
-        if(className == noteBlocks[id].className && noteBlocks[id]) {
+    const removeBlock = (id: string, className: string, blockType: string) => {
+        if(blockType == "note" && className == noteBlocks[id].className && noteBlocks[id]) {
             console.log("will remove block with id:", id, " which class is", className);
             mutateNoteBlocksState(noteBlocks[id], 'remove');
+        }
+        if(blockType == "image" && className == imageBlocks[id].className && imageBlocks[id]) {
+            console.log("will remove block with id:", id, " which class is", className);
+            mutateImageBlockState(imageBlocks[id], 'remove');
         }
     }
     const blockSizePositionUpdate = (
@@ -354,7 +358,7 @@ const Board: React.FC = () => {
                                 </motion.button>
 
                                 <div className="block-tool-container">
-                                    <button onClick={() => removeBlock(note.id, note.className)}>X</button>
+                                    <button onClick={() => removeBlock(note.id, note.className, note.type)}>X</button>
                                 </div>
                                 <div className="block-content">
                                     <textarea
@@ -380,7 +384,7 @@ const Board: React.FC = () => {
                             layout
                             key={image.id}
                             id={image.id}
-                            className={`${image.className} has-tools`} 
+                            className={`${image.className} has-tools remove-topBorder remove-bottomBorder`} 
                             //initial={{ x: Number(note.posX), y: Number(note.posY) }}
                             animate={{ x: Number(image.posX), y: Number(image.posY)}} 
                             transition={{
@@ -399,15 +403,6 @@ const Board: React.FC = () => {
                                 className="resizible" 
                             >
                                 <motion.button 
-                                    className="corner-dot top" 
-                                    drag='y'
-                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                                    dragElastic={0}
-                                    dragMomentum={false}
-                                    onDrag={(event, info) => handleDrag(image.id, "top", image.height, image.width, image.posX, image.posY, event, info, "image")}
-                                >
-                                </motion.button>
-                                <motion.button 
                                     className="corner-dot right"
                                     drag='x'
                                     dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
@@ -416,15 +411,7 @@ const Board: React.FC = () => {
                                     onDrag={(event, info) => handleDrag(image.id, "right", image.height, image.width, image.posX, image.posY, event, info, "image")}
                                 >    
                                 </motion.button>
-                                <motion.button 
-                                    className="corner-dot bottom" 
-                                    drag='y'
-                                    dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                                    dragElastic={0}
-                                    dragMomentum={false}
-                                    onDrag={(event, info) => handleDrag(image.id, "bottom", image.height, image.width, image.posX, image.posY, event, info, "image")}
-                                >
-                                </motion.button>
+
                                 <motion.button 
                                     className="corner-dot left"
                                     drag='x'
@@ -436,7 +423,7 @@ const Board: React.FC = () => {
                                 </motion.button>
 
                                 <div className="block-tool-container">
-                                    <button onClick={() => removeBlock(image.id, image.className)}>X</button>
+                                    <button onClick={() => removeBlock(image.id, image.className, image.type)}>X</button>
                                 </div>
                                 <div 
                                     className="block-content img-block"

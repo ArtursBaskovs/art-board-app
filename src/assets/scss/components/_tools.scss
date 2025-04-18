@@ -23,12 +23,14 @@
     .right { top: 50%; right: -8px; }
     .bottom { bottom: -8px; left: 50%; }
     .left { top: 50%; left: -8px; }
+
+
 }
 
 .block-tool-container {
     display: flex;
     justify-content: end;   
-    padding: 10px 0 10px 0;
+    padding: 10px 0 10px 0px;
     button {
         width: 1.2rem;
         height: 1.2rem;
@@ -43,15 +45,31 @@
 }
 .has-tools {
     padding: 0 15px 15px 15px !important;
+    box-sizing: border-box !important;
+    border: 3px solid transparent;
     &:focus,
     &:focus-within {
-        outline: 3px solid rgba($secondary-color, 0.2); 
+        border: 3px solid rgba($secondary-color, 0.2);
         border-radius: 10px;
         .block-tool-container, .corner-dot {
             visibility: visible;
         }
     }
+
 }
+.remove-topBorder {
+    &:focus,
+    &:focus-within {
+        border-top: none !important;
+    }
+}
+.remove-bottomBorder {
+    &:focus,
+    &:focus-within {
+        border-bottom: none !important;
+    }
+}
+
 .note-block{
     position: absolute;
 
@@ -59,6 +77,7 @@
         border-radius: 5px;
         background-color: #64bbac;
         padding: 10px !important;
+        
     }
     textarea {
         
