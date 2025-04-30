@@ -87,7 +87,7 @@ const Tools: React.FC = () => {
                 onClick={() => {
                     toolButtonHandler('defaultPointer');
                 }}>
-                🦶
+                <CursorIcon />
             </button>
 
             <button className={`icon-btn active-${toolIsActive.note}`}
@@ -111,12 +111,7 @@ const Tools: React.FC = () => {
                 <ImageIcon />
             </button>
 
-            <button className={`icon-btn ${toolIsActive}`}
-                onClick={() => {
-                    toolButtonHandler('select');
-                }}>
-                <CursorIcon />
-            </button>
+
         </motion.div>
         </>
     )

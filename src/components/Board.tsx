@@ -71,7 +71,7 @@ const Board: React.FC = () => {
         if(currentObjByKey.type == "note") mutateNoteBlocksState(currentObjByKey);
         if(currentObjByKey.type == "image") mutateImageBlockState(currentObjByKey);
         //console.log(posX + "<=x y=>" + posY);
-        console.log(imageBlocks); 
+        console.log(noteBlocks); 
     }
 
     const handleBoardDrag = (event: React.MouseEvent<HTMLElement>) => {
@@ -394,7 +394,7 @@ const Board: React.FC = () => {
                               style={{ 
                                 position: "absolute",
                                 width: image.width, 
-                                height: image.height 
+                                
                             }}
                             onMouseDown={(event) => updateBlockData(event, image.type)}
                             onMouseUp={(event) => updateBlockData(event, image.type)}
@@ -426,7 +426,7 @@ const Board: React.FC = () => {
                                     <button onClick={() => removeBlock(image.id, image.className, image.type)}>X</button>
                                 </div>
                                 <div 
-                                    className="block-content img-block"
+                                    className="block-content img-block has-bg-field"
                                     style={{
                                         backgroundImage: `url(${image.link})`,
                                         aspectRatio: "16/9", 

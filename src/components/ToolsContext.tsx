@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 import cursors from "../assets/cursors/note.svg";
+import BoardLoader from "./BoardLoader";
 interface htmlBlock {
     id: string;
     className: string;
@@ -30,6 +31,8 @@ interface ToolsContextType {
     toolIsActive: { [key: string]: boolean }
     setToolIsActive: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>; 
     switchToolButtonsActivity: (buttonName: string) => void;
+    setNoteBlocks: React.Dispatch<React.SetStateAction<{ [key: string]: htmlBlock }>>; 
+    setImageBlocks: React.Dispatch<React.SetStateAction<{ [key: string]: htmlBlock }>>; 
 }
 
 //undifiend bc context requires garanteed value
@@ -44,6 +47,7 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
         note: false,
         image: false,
         defaultPointer: true,
+        boardLoader: false,
     });
 
     const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
@@ -89,8 +93,8 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     // i don`t know if copying this function is ok in this case. 
     // I don`t want to complicate it. aslo its esier when i know which blocks i try to modify when calling a function
     // and feels more managable if i need to to something differently for images
-    const mutateImageBlockState  = (object: htmlBlock, doWhat?: "remove") => {
-        if (doWhat === "remove") {
+    const mutateImageBlockState  = (object: htmlBlock, doWhat?: string) => {
+        if(doWhat === "remove") {
             const updBlocks = { ...imageBlocks };
             delete updBlocks[object.id];
             setImageBlocks(updBlocks);
@@ -183,7 +187,9 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
             temporaryData,
             toolIsActive,
             setToolIsActive,
-            switchToolButtonsActivity
+            switchToolButtonsActivity,
+            setNoteBlocks,
+            setImageBlocks
         }}>
             {children}
         </ToolsContext.Provider>

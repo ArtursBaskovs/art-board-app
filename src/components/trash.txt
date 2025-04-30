@@ -48,3 +48,36 @@
         
         
     }
+
+
+
+
+
+
+
+        useEffect(() => {
+        //loads unsaved data from local storage to put it in indexedDB where rest of boards data is stored
+        const savedOnPageClose = localStorage.getItem('savedOnPageClose');
+        
+        if(savedOnPageClose) {
+            const jsonData = JSON.parse(savedOnPageClose);
+            console.log('unsaved: ', jsonData);
+            saveBoardInIndexedDB(jsonData);
+
+            localStorage.removeItem('savedOnPageClose');
+        }
+        //save current board before tab or browser is closed in localsotrage
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            const jsonData = gatherBoardJsonData(currentBoard);
+            localStorage.setItem('savedOnPageClose', JSON.stringify(jsonData)); 
+            event.preventDefault(); 
+            event.returnValue = ''; 
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+    useEffect(() => {
+        console.log('current board', currentBoard);
+    }, [currentBoard])

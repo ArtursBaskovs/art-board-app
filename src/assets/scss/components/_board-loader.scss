@@ -1,0 +1,45 @@
+.board-loader-boards {
+    .name{
+        color: $accent-color;
+    }
+    .advice {
+        color: rgba(#44C2F0, 0.7);
+
+    }
+}
+.boardList-container {
+    @include sidebar-block-border;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    padding-top: 0;
+    padding-bottom: 1em;
+    button {
+        background-color: transparent;
+        text-align: start;
+        padding-left: 0;
+    }
+    button:hover {
+        background: none;
+        color: $secondary-color;
+    }
+}
+.loader-choice {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    button{
+        margin: 0 1em 0 1em;
+    }
+}
+.saveLocally, .localUpload {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    input {
+        margin: 0 0 1em 0;
+    }
+}
+.localUpload {
+
+}

@@ -40,6 +40,10 @@
     }
     
 }
+.has-bg-field {
+    background-color: rgba($secondary-color, 0.05);
+    border-radius: 10px;
+}
 .block-tool-container, .corner-dot {
     visibility: hidden;
 }
@@ -75,7 +79,7 @@
 
     .block-content {
         border-radius: 5px;
-        background-color: #64bbac;
+        background-color: rgba($secondary-color, 0.9);
         padding: 10px !important;
         
     }
@@ -99,6 +103,7 @@
     }
     .img-block {
         position: absolute;
+        background-color: #f0f0f0;
     }
 
    
