@@ -1,7 +1,7 @@
 
 export const generateOpenAiIdeas = async (prompt: string): Promise<string> => {
     try {
-        const response = await fetch('/api/generate', {
+        const response = await fetch('https://art-board-app-backend.onrender.com/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
