@@ -112,10 +112,13 @@ const BoardLoader: React.FC = () => {
             console.log("Won`t save empty board in indexed DB");
             return;
         }
-        let openRequest = indexedDB.open("boardsDB", 1);
+        let openRequest = indexedDB.open("boardsDB", 2);
         openRequest.onupgradeneeded = (event) => {
             const openedDB = (event.target as IDBOpenDBRequest).result;
-            openedDB.createObjectStore('userBoards', { keyPath: "boardName", autoIncrement: true});
+            //openedDB.createObjectStore('userBoards', { keyPath: "boardName", autoIncrement: true});
+            if (!openedDB.objectStoreNames.contains('userBoards')) {
+                openedDB.createObjectStore('userBoards', { keyPath: "boardName", autoIncrement: true });
+            }
         }
         openRequest.onsuccess = () => {
             const openedDB = openRequest.result;
@@ -136,7 +139,13 @@ const BoardLoader: React.FC = () => {
 
     const getIndexedDBboards = async (getWhat: string): Promise<unknown> => {
         return new Promise((resolve, reject) => {
-            let openRequest = indexedDB.open("boardsDB", 1);
+            let openRequest = indexedDB.open("boardsDB", 2);
+            openRequest.onupgradeneeded = (event) => {
+                const openedDB = (event.target as IDBOpenDBRequest).result;
+                if (!openedDB.objectStoreNames.contains('userBoards')) {
+                    openedDB.createObjectStore('userBoards', { keyPath: "boardName", autoIncrement: true });
+                }
+            };
             openRequest.onsuccess = () => {
                 const openedDB = openRequest.result;
                 const dbTransaction = openedDB.transaction('userBoards', 'readonly');
