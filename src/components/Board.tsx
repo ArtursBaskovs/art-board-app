@@ -50,6 +50,7 @@ const Board: React.FC = () => {
             });
           }
         }, 100); 
+        alert("working?");
       }, []);
 
     //updates position data on click and after click release
