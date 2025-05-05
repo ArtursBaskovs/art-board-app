@@ -38,16 +38,18 @@ const Board: React.FC = () => {
     const isLinkRecievedRef = useRef<boolean>(false);
     const [imgPosX, setImgPosX] = useState<number | null>(null);
     const [imgPosY, setImgPosY] = useState<number | null>(null);
-
+    //it is important to scroll page to center so board dragging works as intented 
     useEffect(() => {
-        const board = document.getElementById("board1");
-        if (board) {
+        setTimeout(() => {
+          const board = document.getElementById("board1");
+          if (board) {
             board.scrollIntoView({
-            behavior: "auto",
-            block: "center",
-            inline: "center",
-          });
-        }
+              behavior: "smooth",
+              block: "center",
+              inline: "center",
+            });
+          }
+        }, 100); 
       }, []);
 
     //updates position data on click and after click release
