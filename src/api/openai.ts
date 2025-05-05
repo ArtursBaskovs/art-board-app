@@ -1,7 +1,8 @@
 
 export const generateOpenAiIdeas = async (prompt: string): Promise<string> => {
     try {
-        const response = await fetch('https://art-board-app-backend.onrender.com/', {
+        const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+        const response = await fetch(`${BASE_URL}/api/generate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
