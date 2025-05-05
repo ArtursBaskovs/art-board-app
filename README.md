@@ -23,6 +23,11 @@ After work with the board is done, user can save them on their pc or it will be 
 
 ![image](https://github.com/user-attachments/assets/ed69ccb8-07c9-4ea4-ab3d-47283c24eff9)
 
+So the basic idea of this web app usage for person who is drawing something is:
+1. Generate ideas about themes you want for inspiration
+2. Put that idea on board, then search it on Pinterest for image references.
+3. Organize references and ideas for your artwork on board, and then you have enough inspiration for starting to draw something.
+
 ## Installation
 After git clone
 1. npm install
