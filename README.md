@@ -4,7 +4,8 @@ This app is an intercative board like miro and others.
 I used Framer Motion library to add all drag and resize functionality for elements on this board.
 
 It was created for my learning and practicing purposes. I was learning how to build a project using React. How to use available libraries, integrate an api, how to implement basic React tools and concepts with TypeScript.
-To create this project I was using Vite, TypeScript, SCSS, Framer Motion, OpaenAI api.
+
+To create this project I was using Vite, TypeScript, SCSS, Framer Motion, OpaenAI API, Context API.
 
 This web app helps users to generate and orginize ideas for their art projects. 
 
