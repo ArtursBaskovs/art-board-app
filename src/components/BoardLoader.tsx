@@ -11,6 +11,7 @@ const BoardLoader: React.FC = () => {
         boardNameLocal: '',
         boardNameDB: '',
         boardLink: '',
+        boardNameinpt: ''
     });
     const [warningMsg, setWarningMsg] = useState('');
     let fileReader: FileReader;
@@ -217,13 +218,34 @@ const BoardLoader: React.FC = () => {
     //  for savind progress in case browser will be closed
     useEffect(() => {
         const jsonData = gatherBoardJsonData(currentBoard);
+        console.log("Current board: ",currentBoard);
+        if(currentBoard == "") setCurrentBoard('Noname board');
         localStorage.setItem('savedOnPageClose', JSON.stringify(jsonData));
     }, [noteBlocks, imageBlocks, currentBoard]);
+
+    const giveBoardName = () => {
+        setCurrentBoard(formInput.boardNameinpt);
+    }
+    const loadNewBoard = () => {
+        const emptyNewBoard = JSON.stringify({boardName: "", notes: {}, images: {}});
+        loadBoardData(emptyNewBoard);
+    }
 
 
     return (
         <>
         <div className="board-loader-boards">
+            {currentBoard == '' || currentBoard == 'Noname board' || currentBoard == 'unknown board' && <div>
+                <input
+                    type="text"
+                    name="boardNameinpt"
+                    placeholder="Enter board name"
+                    value={formInput.boardNameinpt}
+                    onChange={inputHandler}
+                />
+                <button onClick={giveBoardName}>Ok</button>
+            </div>}
+
             <p className="name">Board name: {currentBoard}</p>
             <p className="advice">Board is saved in your browser or you can save it on pc</p>
             <div className="boardList-container">
@@ -243,6 +265,7 @@ const BoardLoader: React.FC = () => {
             >
                 upload
             </button>
+            <button onClick={loadNewBoard}>new board</button>
         </div>
 
         { choice == 'save' &&
