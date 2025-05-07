@@ -7,6 +7,10 @@ It was created for my learning and practicing purposes. I was learning how to bu
 To create this project I was using Vite, TypeScript, SCSS, Framer Motion, OpaenAI api.
 
 This web app helps users to generate and orginize ideas for their art projects. 
+
+## App demo
+https://artursbaskovs.github.io/art-board-app/
+
 ## App usage demonstration
 From sidebar tool list user can open ideas form, where it can generate ideas about chosen topics. Then thos ideas can be put on board in form of a note.
 
