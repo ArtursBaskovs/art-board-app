@@ -13,7 +13,6 @@ export const generateOpenAiIdeas = async (prompt: string): Promise<string> => {
         if (!response.ok) {
             throw new Error('Failed to get data from server');
         }
-
         const data = await response.json();
         return data.result;
     } catch (error) {

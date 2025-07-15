@@ -47,9 +47,6 @@ import generateOpenAiIdeas from "../../api/openai";
         }
     }    
     
-    const handleGeneratedAnswer = () => {
-        // либо здесь либо в том файле вывести ответы в поля
-    }
 
     export const getGenerationResult = async (topics: string[]) => {
         const requestText = prepareRequest(topics);
