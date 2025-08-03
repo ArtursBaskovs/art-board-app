@@ -11,6 +11,7 @@ This web app helps users to generate and orginize ideas for their art projects.
 
 ## App demo
 https://art-board-app-2e5v.vercel.app/art-board-app/board/0d1ca724
+The mobile version is not supported yet.
 
 ## App usage demonstration
 From sidebar tool list user can open ideas form, where it can generate ideas about chosen topics. Then thos ideas can be put on board in form of a note.
