@@ -38,5 +38,10 @@ After git clone
 1. npm install
 2. npm run dev
 
+## env. file template
+VITE_API_BASE_URL=*************
+VITE_DB_API_BASE_URL=*************
+VITE_DB_API_KEY=***********
+
 
 
