@@ -34,8 +34,17 @@
     border-radius: 3px 3px 3px 3px; 
 }
 
+.sideBar_nav{
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
 .idea-tool-window{
     position: fixed;
     top: 0;  /* Настроить по вертикали */
     left: 20vw;  /* Сдвигаем блок за пределы родителя */
+}
+.bord-loader-window {
+    flex: 1;
 }

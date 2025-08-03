@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 import cursors from "../assets/cursors/note.svg";
-import BoardLoader from "./BoardLoader";
+import BoardLoader from "./BoardLoader/LocallBoardLoader";
 interface htmlBlock {
     id: string;
     className: string;
@@ -12,7 +12,7 @@ interface htmlBlock {
     link: string;
     type: string;
 }
-
+//I use it to share functions and same states between all components
 interface ToolsContextType {
     ideasFormVisibilityToggle: (isVisible: boolean) => void;
     isFormVisible: boolean;
@@ -54,10 +54,12 @@ export const ToolsProvider = ({ children }: { children: ReactNode }) => {
     //object for generating note hmtl elements
     const [noteBlocks, setNoteBlocks] = useState<{[key: string]: htmlBlock}>({});
     const [imageBlocks, setImageBlocks] = useState<{[key: string]: htmlBlock}>({});
+    //cursors
+    const base = import.meta.env.BASE_URL;
     const cursors: Record<string, string> = {
-        default: '/def.svg',
-        note: '/cursors/note.svg',
-        image: 'cursors/image.svg'
+        default: `${base}cursors/def.svg`,
+        note: `${base}cursors/note.svg`,
+        image: `${base}cursors/image.svg`,
     };
     const [currentCursor, setCurrentCursor] = useState<string>(cursors.default);
     const temporaryData = useRef<htmlBlock | null>(null);
