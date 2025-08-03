@@ -2,13 +2,14 @@
 @import './base/variables';
 @import './base/mixins';
 @import './globals';
-@import './components/button';
+@import './global_elements/button';
 @import './components/sideBar';
 @import './components/IdeasForm';
-@import './components/input';
+@import './global_elements/input';
 @import './components/tools';
-@import './components/textarea';
+@import './global_elements/textarea';
 @import './components/board';
 @import './components/board-app';
 @import './components/imageLinkForm';
 @import './components/board-loader';
+@import './global_elements/text';

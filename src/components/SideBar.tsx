@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IdeasForm from "./IdeasForm/IdeasForm";
 import Tools from "./Tools";
 import { ToolsProvider, useTools } from './ToolsContext';
 import Board from "./Board";
-import BoardLoader from "./BoardLoader";
+import BoardLoader from "./BoardLoader/BoardLoader";
+
+
+
+
 
 
 const SideBar: React.FC = () => {
-    
-    const {toolIsActive} = useTools();
-    
+
+    //const {toolIsActive} = useTools();
+
     return (
         <div className="sideBar-container">
             <aside className="sideBar">

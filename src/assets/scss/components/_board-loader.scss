@@ -1,3 +1,6 @@
+.board-loader-tab {
+    flex: 1;
+}
 .board-loader-boards {
     .name{
         color: $accent-color;
@@ -40,6 +43,43 @@
         margin: 0 0 1em 0;
     }
 }
-.localUpload {
-
+.board-loader-switch {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 1em;
+    button{
+        overflow: hidden;
+        width: 5em;
+        height: 3em;
+        padding: 0;
+        
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+    }
+    margin-bottom: 1em;
 }
+
+.boardList-server-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.server-loader-boards {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    gap: 0.8em;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    a {
+        color: $text-color;
+    }
+} 

@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useTools } from "./ToolsContext";
+import { useTools } from "../ToolsContext";
+import { useBoardFetch } from "../../api/mysqlDBapi";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useBoardLink } from "./hooks/HandleLinks";
+import { useloadBoardData, BoardData } from "./hooks/HandleBoardLoad";
 
-const BoardLoader: React.FC = () => {
+const LocallBoardLoader: React.FC = () => {
 //all board data will be saved in indexedDB for long term. 
 // In localStorage will be saved board latest data 
 
@@ -18,12 +22,41 @@ const BoardLoader: React.FC = () => {
     const [currentBoard, setCurrentBoard] = useState('');
     const [boardList, setBoardList] = useState<string[]>([]);
     const [latestBoard, setLatestBoard] = useState('');
-
-
+    
     const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormInput(prev => ({ ...prev, [name]: value }));
     };
+    //gets id from current link if it exists
+    const {baseLink, boardPath, boardIDlink} = useBoardLink();
+
+    //load board that is stored in browser
+    useEffect(() => {
+        getBoardList();
+        //cancel local board loading if user tries to access board stored in server
+        if(boardPath) return;
+
+        const savedInLocal = localStorage.getItem('savedOnPageClose');
+        if(savedInLocal) {
+            const jsonData = JSON.parse(savedInLocal) as BoardData;
+            saveBoardInIndexedDB(jsonData);
+            fetchBoardAsync(jsonData.boardName);
+        }
+    }, []);
+
+    //updates data of current board in local store each time something changes on board
+    //  for savind progress in case browser will be closed
+    useEffect(() => {
+        const jsonData = gatherBoardJsonData(currentBoard);
+        //console.log("Current board: ",currentBoard);
+        if(currentBoard == "") setCurrentBoard('Noname board');
+        localStorage.setItem('savedOnPageClose', JSON.stringify(jsonData));
+    }, [noteBlocks, imageBlocks, currentBoard]);
+
+
+
+
+
     const choiceHandler = (whatChoice: string) => {
         if(whatChoice == 'save') setChoice('save');
         if(whatChoice == 'upload') setChoice('upload'); 
@@ -36,7 +69,7 @@ const BoardLoader: React.FC = () => {
             notes: noteBlocks,      
             images: imageBlocks,    
         };
-        console.log(boardJsonData);
+        //console.log(boardJsonData);
         return boardJsonData;
     }
     const exportJsonFile = (jsonData: {}) => {
@@ -64,21 +97,18 @@ const BoardLoader: React.FC = () => {
             fileReader = new FileReader();
             fileReader.onloadend = () => {
                 const fileContent = fileReader.result; //file content is here
-                loadBoardData(fileContent as string);
+                applyBoardData(fileContent as string);
             };
             fileReader.readAsText(file);
         }
         input.click();  
     };
-    type BoardData = {
-        boardName: string;
-        images: {};
-        notes: {};
-    };
-    //will be used to load from any source
-    const loadBoardData = (content: string) => {
-        const jsonData: BoardData = JSON.parse(content);
-        console.log(jsonData.boardName);
+
+
+    //used to load board from json data. after that all board elements should appear on board
+    const loadBoardData = useloadBoardData();
+    const applyBoardData = (content: string) => {
+        const jsonData = JSON.parse(content);
         
         //populates one of state that containes note images or other type of html blocks
         if(jsonData.boardName) {
@@ -86,17 +116,8 @@ const BoardLoader: React.FC = () => {
         } else {
             setCurrentBoard("unknown board");
         }
-        if(jsonData.notes) {
-            setNoteBlocks(jsonData.notes);
-        } else {
-            console.warn("No notes was found in ", jsonData.boardName, ".json");
-        }
-        if(jsonData.images) {
-            setImageBlocks(jsonData.images)
-        } else {
-            console.warn("No images was found in ", jsonData.boardName, ".json");
-        }
 
+        loadBoardData(jsonData);
     }
     
     const saveBoardLocally = () => {
@@ -108,9 +129,10 @@ const BoardLoader: React.FC = () => {
         exportJsonFile(jsonData);
         saveBoardInIndexedDB(jsonData);
     }
+    
     const saveBoardInIndexedDB = (boardJsonData: BoardData) => {
         if(boardJsonData.boardName === '') {
-            console.log("Won`t save empty board in indexed DB");
+            //console.log("Won`t save empty board in indexed DB");
             return;
         }
         let openRequest = indexedDB.open("boardsDB", 2);
@@ -129,7 +151,7 @@ const BoardLoader: React.FC = () => {
             store.put(boardJsonData);
 
             dbTransaction.oncomplete = () => {
-                console.log("Json board data was saved in IndexedDB");
+                //console.log("Json board data was saved in IndexedDB");
             }
             dbTransaction.onerror = () => {
                 console.error("Error saving json board data:", dbTransaction.error);
@@ -183,7 +205,7 @@ const BoardLoader: React.FC = () => {
         const boardJsonData = await getIndexedDBboards(boardName) as string;
         const boardStr = JSON.stringify(boardJsonData);
         //console.log(boardStr);
-        loadBoardData(boardStr);
+        applyBoardData(boardStr);
     };
     const getBoardList = async () => {
         const boardsJsonData = await getIndexedDBboards('getAll') as BoardData[];
@@ -191,44 +213,33 @@ const BoardLoader: React.FC = () => {
         const listOfBoards = boardsJsonData.map(board => board.boardName);
         setBoardList(listOfBoards);
     }
-    useEffect(() => {
-        getBoardList();
-        const savedInLocal = localStorage.getItem('savedOnPageClose');
-        if(savedInLocal) {
-            const jsonData = JSON.parse(savedInLocal) as BoardData;
-            saveBoardInIndexedDB(jsonData);
-            fetchBoardAsync(jsonData.boardName);
-        }
-    }, []);
+
+
 
     const saveCurrentBoard = () => {
         const jsonData = gatherBoardJsonData(currentBoard);
-        console.log(jsonData);
+        //console.log(jsonData);
         saveBoardInIndexedDB(jsonData);
     } 
+    const navigate = useNavigate();
     const switchBoard = (boardName: string) => {
         //save current board first
         saveCurrentBoard();
+        //change link to basic when using boards from locall storage
+        console.log(baseLink);
+        navigate(`${baseLink}/`);
         //load another one after
         fetchBoardAsync(boardName);
         setCurrentBoard(boardName); //?????
     }
     
-    //updates data of current board in local store each time something changes on board
-    //  for savind progress in case browser will be closed
-    useEffect(() => {
-        const jsonData = gatherBoardJsonData(currentBoard);
-        console.log("Current board: ",currentBoard);
-        if(currentBoard == "") setCurrentBoard('Noname board');
-        localStorage.setItem('savedOnPageClose', JSON.stringify(jsonData));
-    }, [noteBlocks, imageBlocks, currentBoard]);
 
     const giveBoardName = () => {
         setCurrentBoard(formInput.boardNameinpt);
     }
     const loadNewBoard = () => {
         const emptyNewBoard = JSON.stringify({boardName: "", notes: {}, images: {}});
-        loadBoardData(emptyNewBoard);
+        applyBoardData(emptyNewBoard);
     }
 
 
@@ -316,4 +327,4 @@ const BoardLoader: React.FC = () => {
         </>
     )
 }
-export default BoardLoader;
+export default LocallBoardLoader;
