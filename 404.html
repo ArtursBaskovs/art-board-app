@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      const redirectUrl = window.location.origin + '/art-board-app' +
+        window.location.pathname.replace('/art-board-app', '') +
+        window.location.search + window.location.hash;
+      window.location.replace(redirectUrl);
+    </script>
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+  </body>
+</html>
