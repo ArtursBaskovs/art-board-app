@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <script>
-      const redirectUrl = window.location.origin + '/art-board-app' +
-        window.location.pathname.replace('/art-board-app', '') +
-        window.location.search + window.location.hash;
-      window.location.replace(redirectUrl);
-    </script>
+    <meta charset="utf-8">
     <title>Redirecting…</title>
+    <script>
+      // This fixes GitHub Pages SPA routing
+      (function() {
+        var path = window.location.pathname;
+        var repoName = '/art-board-app';
+        var fallbackIndex = repoName + '/index.html';
+
+        if (!path.startsWith(repoName)) {
+          fallbackIndex = '/index.html';
+        }
+
+        var redirectTo = repoName + '/?redirect=' +
+                         encodeURIComponent(path + window.location.search + window.location.hash);
+        window.location.replace(redirectTo);
+      })();
+    </script>
   </head>
   <body>
     <p>Redirecting…</p>
