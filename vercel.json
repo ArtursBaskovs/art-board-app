@@ -3,6 +3,6 @@
     { "source": "/art-board-app/:path*", "destination": "/index.html" }
   ],
   "redirects": [
-    { "source": "/", "destination": "/art-board-app/", "permanent": true }
+    { "source": "/", "destination": "/art-board-app", "permanent": true }
   ]
 }
