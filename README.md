@@ -29,6 +29,11 @@ After work with the board is done, user can save them on their pc or it will be 
 
 ![image](https://github.com/user-attachments/assets/ed69ccb8-07c9-4ea4-ab3d-47283c24eff9)
 
+Later on, server side storage was added. Board can now be stored in a remote DB and accesed via a link. User can save a board link on the side panel or just copy it and store it wherever they see fit.
+link example: https://art-board-app-2e5v.vercel.app/art-board-app/board/dd18ad68
+<img width="351" height="456" alt="image" src="https://github.com/user-attachments/assets/87712bb1-c090-456a-9f97-d945c6694619" />
+
+
 So the basic idea of this web app usage for person who is drawing something is:
 1. Generate ideas about themes you want for inspiration
 2. Put that idea on board, then search it on Pinterest for image references.
