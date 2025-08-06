@@ -44,8 +44,10 @@ After git clone
 1. npm install
 2. npm run dev
 ## Backend repositories for this project
-https://github.com/ArtursBaskovs/art-board-db-api - rest API for MySQL database
-https://github.com/ArtursBaskovs/art-board-app-backend/blob/main/openai.js - handles requests to openai API for idea generation tool
+
+https://github.com/ArtursBaskovs/art-board-db-api - rest API for MySQL database.
+
+https://github.com/ArtursBaskovs/art-board-app-backend/blob/main/openai.js - handles requests to openai API for idea generation tool.
 
 ## env. file template
 VITE_API_BASE_URL=*************
